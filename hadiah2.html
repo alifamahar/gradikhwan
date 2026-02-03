@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Ikhwan's Graduation Day!</title>
+  <link rel="icon" type="image/x-icon" href="pala.png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bellefair&family=Great+Vibes&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+20&family=Monsieur+La+Doulaise&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap"
+    rel="stylesheet">
+  <style>
+      BODY{
+       margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:rgb(0, 0, 0);
+      font-family:"bellefair";
+    }
+    .back-btn{
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top));
+      left: max(14px, env(safe-area-inset-left));
+      z-index: 50;
+
+      border: 0;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 999px;
+
+      background: rgba(255,255,255,.9);
+      color: var(--ink);
+      font-weight: 900;
+      letter-spacing: .2px;
+      transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+      user-select: none;
+    }
+    .back-btn:hover{ transform: translateY(-1px); box-shadow: 0 18px 36px rgba(0,0,0,.45); }
+    .back-btn:active{ transform: translateY(0); opacity: .9; }
+    .container{
+      width:min(480px, 80vw);
+      text-align:center;
+    }
+    .wrap{
+      width:100%;
+      border-radius:16px;
+      overflow:hidden;
+      position:relative;
+    }
+    video{
+      width:100%;
+      height:100vh;
+      aspect-ratio: 1/1;
+      display:block;
+      cursor:pointer;
+    }
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.45);
+      color:#fff;
+      font-weight:700;
+      font-size:16px;
+      cursor:pointer;
+      user-select:none;
+      padding:16px;
+      text-align:center;
+    }
+    .caption{
+      margin-top:14px;
+      font-size:2rem;
+      line-height:1.35;
+      letter-spacing:.2px;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" id="backBtn" type="button">x</button>
+    <div class="container">
+        <div class="wrap">
+          <video id="vid" playsinline preload="metadata"></video>
+          <div id="overlay" class="overlay">Klik untuk lanjut</div>
+        </div>
+    
+        
+      </div>
+      <div class="caption">
+        klik kucing tersebut dan tunggu dia berputar 3x.<br>LALU LIHAT APA YANG AKAN TERJADI!!!😱😱😱
+      </div>
+    
+
+<script>
+  document.getElementById("backBtn").addEventListener("click", () => {
+      window.close();
+      setTimeout(() => { window.location.href = "index.html"; }, 120);
+    });
+  const vid = document.getElementById('vid');
+  const overlay = document.getElementById('overlay');
+
+  const video1 = [
+    { src: "video1.webm", type: "video/webm" },
+    { src: "kucing.mp4",  type: "video/mp4"  },
+  ];
+  const video2 = [
+    { src: "video2.webm", type: "video/webm" },
+    { src: "video-ikhwan.mp4",  type: "video/mp4"  },
+  ];
+
+  let stage = 1; // 1 = video1, 2 = video2
+  vid.loop = false;
+
+  function setSources(list){
+    vid.innerHTML = "";
+    for (const s of list){
+      const source = document.createElement("source");
+      source.src = s.src;
+      source.type = s.type;
+      vid.appendChild(source);
+    }
+    vid.load();
+  }
+
+  // Load video1 dulu (diam di frame awal)
+  setSources(video1);
+
+  // Biar frame awal kebuka (hindari layar hitam di beberapa browser)
+  vid.addEventListener("loadedmetadata", () => {
+    try { vid.currentTime = 0.01; } catch(e) {}
+  });
+
+  async function tryPlay(){
+    overlay.style.display = "none";
+    try {
+      await vid.play();
+    } catch (e) {
+      // kalau play/autoplay diblokir, minta klik user
+      overlay.style.display = "flex";
+    }
+  }
+
+  // Klik video: play/pause (kalau sudah ended, mulai lagi dari awal stage itu)
+  vid.addEventListener("click", async () => {
+    if (vid.ended) vid.currentTime = 0;
+    if (vid.paused) await tryPlay();
+    else vid.pause();
+  });
+
+  // Overlay click: paksa play kalau sebelumnya diblok
+  overlay.addEventListener("click", () => tryPlay());
+
+  // Saat video1 selesai -> ganti ke video2 & coba autoplay
+  vid.addEventListener("ended", async () => {
+    if (stage === 1){
+      stage = 2;
+      setSources(video2);
+      // tunggu source kebaca sedikit lalu coba play
+      vid.addEventListener("loadeddata", tryPlay, { once:true });
+    }
+  });
+</script>
+
+</body>
+</html>

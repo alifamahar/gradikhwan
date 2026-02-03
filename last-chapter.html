@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>Ikhwan's Graduation Day!</title>
+  <link rel="icon" type="image/x-icon" href="pala.png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bellefair&family=Great+Vibes&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+20&family=Monsieur+La+Doulaise&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root{
+      /* SEMUA PUTIH + GLOW */
+      --accent: #ffffff;
+      --line: rgba(255,255,255,.95);
+      --wallw: 4;
+
+      /* glass putih */
+      --glass: rgba(255,255,255,.10);
+
+      /* glow */
+      --glow: 0 0 10px rgba(255,255,255,.55),
+              0 0 22px rgba(255,255,255,.35),
+              0 0 42px rgba(255,255,255,.18);
+
+      --shadow: 0 18px 44px rgba(0, 0, 0, .45);
+      --radius: 18px;
+    }
+
+    body {
+      /* BACKGROUND DIBIARIN */
+      background: linear-gradient(#274561d7, #000000a9), url("bg4.jpg") no-repeat center / cover;
+      color: #fff;
+      font-family: 'Arial Black', Courier, monospace;
+      margin: 0;
+      min-height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      touch-action: none;
+      overflow: hidden;
+    }
+
+    /* Semua teks putih + glow */
+    body, h1, p, .btn, .restart-btn, .card-title, .card-text, .tiny-note {
+      color: #fff !important;
+      text-shadow: var(--glow);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin: 10px 0 10px;
+      color: #fff !important;
+      text-transform: uppercase;
+      font-weight: 300;
+      text-shadow: var(--glow);
+    }
+
+    p {
+      font-size: .8rem;
+      font-family: "bellefair";
+      color: rgba(255,255,255,.88) !important;
+      margin: 0 0 10px;
+    }
+
+    /* Area game */
+    #game-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 100vw;
+    }
+
+    #game-box {
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, .35) !important;
+      background: linear-gradient(180deg, var(--glass), rgba(0, 0, 0, .18));
+      box-shadow: var(--shadow), var(--glow);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      background: transparent;
+      /* glow global canvas */
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.35))
+              drop-shadow(0 0 22px rgba(255,255,255,.18));
+    }
+
+    .controls-ui {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 6px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      margin-left: 18px;
+    }
+
+    .btn {
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.10) !important;
+      border: 1px solid rgba(255, 255, 255, .35) !important;
+      border-radius: 50%;
+      color: #fff !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .22), var(--glow);
+      text-shadow: var(--glow);
+    }
+
+    .btn:active {
+      background: rgba(255,255,255,.18) !important;
+      border-color: rgba(255,255,255,.55) !important;
+      transform: translateY(1px) scale(.98);
+    }
+
+    .btn:hover {
+      background: rgba(255,255,255,.18) !important;
+      border-color: rgba(255,255,255,.55) !important;
+    }
+
+    .up { grid-column: 2; }
+    .left { grid-column: 1; }
+    .down { grid-column: 2; }
+    .right { grid-column: 3; }
+
+    .restart-btn {
+      margin-top: 14px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.55) !important;
+      color: #fff !important;
+      border-radius: 10px;
+      font-family: "bellefair";
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .18), var(--glow);
+      text-shadow: var(--glow);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .restart-btn:hover {
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.75) !important;
+    }
+
+    .restart-btn:active{
+      transform: translateY(1px);
+    }
+
+    @media (max-width: 700px) {
+      #game-area {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .controls-ui {
+        margin-left: 0;
+        grid-template-columns: repeat(3, 56px);
+      }
+
+      .btn {
+        width: 56px;
+        height: 56px;
+        font-size: 1.35rem;
+      }
+    }
+
+    /* ========================= POPUP CARD ========================= */
+    .hidden {
+      display: none !important;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, .45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .card {
+      width: min(520px, 92vw);
+      background: rgba(255,255,255,.10) !important;
+      border: 1px solid rgba(255, 255, 255, .30) !important;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), var(--glow) !important;
+      padding: 16px 16px 14px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background:
+        radial-gradient(1200px 400px at 20% 0%, rgba(255, 255, 255, .18), transparent 60%),
+        radial-gradient(900px 500px at 90% 120%, rgba(255, 255, 255, .10), transparent 62%);
+      pointer-events: none;
+      opacity: .95;
+    }
+
+    .card-inner {
+      position: relative;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 1.0rem;
+      color: #fff !important;
+      letter-spacing: .2px;
+      font-weight: 400;
+      text-shadow: var(--glow);
+    }
+
+    .card-text {
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      line-height: 1.35;
+      font-size: .95rem;
+      color: rgba(255, 255, 255, .92) !important;
+      white-space: pre-wrap;
+      text-shadow: var(--glow);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-top: 2px;
+    }
+
+    .cbtn {
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .2px;
+      box-shadow: 0 12px 26px rgba(0, 0, 0, .25), var(--glow);
+      transition: transform .15s ease, opacity .15s ease, background .15s ease, border-color .15s ease;
+      font-size: .85rem;
+    }
+
+    .cbtn:active {
+      transform: translateY(1px);
+      opacity: .92;
+    }
+
+    .cbtn-primary {
+      background: rgba(255, 255, 255, .95) !important;
+      color: #000 !important;
+      text-shadow: none !important;
+    }
+
+    .cbtn-ghost {
+      background: rgba(255, 255, 255, .10) !important;
+      color: rgba(255, 255, 255, .95) !important;
+      border: 1px solid rgba(255, 255, 255, .30) !important;
+    }
+
+    .tiny-note {
+      font-family: Arial, sans-serif;
+      font-size: .72rem;
+      opacity: .8;
+      color: rgba(255, 255, 255, .9) !important;
+      text-shadow: var(--glow);
+    }
+  </style>
+</head>
+
+<body>
+
+  <audio src="pou.mp3" id="bg-audio" autoplay loop></audio>
+
+  <h1>Bantu Ikhwan Menemui HRD</h1>
+
+  <div id="game-area">
+    <div id="game-box">
+      <canvas id="mazeCanvas"></canvas>
+    </div>
+<!-- 
+    <div class="controls-ui" id="controlsUI">
+      <div class="btn up" onpointerdown="move('ArrowUp')">▲</div>
+      <div class="btn left" onpointerdown="move('ArrowLeft')">◀</div>
+      <div class="btn down" onpointerdown="move('ArrowDown')">▼</div>
+      <div class="btn right" onpointerdown="move('ArrowRight')">▶</div>
+    </div> -->
+  </div>
+
+  <button class="restart-btn" onclick="setup()">Menyerah & Ulangi</button>
+
+  <!-- POPUP MODAL -->
+  <div class="modal hidden" id="winModal" role="dialog" aria-modal="true">
+    <div class="card">
+      <!-- FIX typo: csard-inner -> card-inner -->
+      <div class="card-inner">
+        <div class="card-title" id="modalTitle">last</div>
+        <div class="card-text" id="modalText"></div>
+        <div class="card-actions" id="modalActions"></div>
+        <div class="tiny-note" id="modalNote">klik tombolnya pelan-pelan ngab</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("mazeCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // audio bener (biar gak undefined)
+    const audio = document.getElementById("bg-audio");
+
+    // --- KONFIG ---
+    const TARGET_COLS = 13;
+    const MIN_CELL = 22;
+    const MAX_CELL = 40;
+
+    let cellSize = 30;
+    let rows, cols, maze, player, goal;
+
+    const playerImg = new Image();
+    playerImg.src = "pala.png";
+    let imageLoaded = false;
+    playerImg.onload = () => { imageLoaded = true; draw(); };
+
+    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
+    function initSize() {
+      const isMobileLayout = window.innerWidth <= 700;
+
+      const reservedForControls = isMobileLayout ? 0 : ((60 * 3) + (6 * 2) + 18 + 24);
+      const maxCanvasW = Math.max(220, window.innerWidth - reservedForControls - 24);
+
+      const reservedH = isMobileLayout ? 260 : 170;
+      const maxCanvasH = Math.max(220, window.innerHeight - reservedH);
+
+      const canvasSize = Math.floor(Math.min(maxCanvasW, maxCanvasH));
+
+      cellSize = clamp(Math.floor(canvasSize / TARGET_COLS), MIN_CELL, MAX_CELL);
+
+      cols = Math.floor(canvasSize / cellSize);
+      rows = Math.floor(canvasSize / cellSize);
+
+      cols = Math.max(cols, 6);
+      rows = Math.max(rows, 6);
+
+      canvas.width = cols * cellSize;
+      canvas.height = rows * cellSize;
+    }
+
+    function setup() {
+      initSize();
+
+      maze = Array.from({ length: rows }, () =>
+        Array.from({ length: cols }, () => ({
+          visited: false,
+          walls: [true, true, true, true]
+        }))
+      );
+
+      generateMaze(0, 0);
+      player = { x: 0, y: 0 };
+      goal = { x: cols - 1, y: rows - 1 };
+      draw();
+    }
+
+    function generateMaze(r, c) {
+      maze[r][c].visited = true;
+
+      const neighbors = [
+        [r - 1, c, 0, 2],
+        [r, c + 1, 1, 3],
+        [r + 1, c, 2, 0],
+        [r, c - 1, 3, 1]
+      ].sort(() => Math.random() - 0.5);
+
+      for (const [nr, nc, wall, opp] of neighbors) {
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !maze[nr][nc].visited) {
+          maze[r][c].walls[wall] = false;
+          maze[nr][nc].walls[opp] = false;
+          generateMaze(nr, nc);
+        }
+      }
+    }
+
+    function draw() {
+      if (!maze) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Putih + glow untuk garis maze
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || "rgba(255,255,255,.95)";
+      const wallW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wallw')) || 4;
+      ctx.lineWidth = wallW;
+      ctx.lineCap = "round";
+
+      ctx.shadowColor = "rgba(255,255,255,.55)";
+      ctx.shadowBlur = 12;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * cellSize;
+          const y = r * cellSize;
+
+          ctx.beginPath();
+          if (maze[r][c].walls[0]) line(x, y, x + cellSize, y);
+          if (maze[r][c].walls[1]) line(x + cellSize, y, x + cellSize, y + cellSize);
+          if (maze[r][c].walls[2]) line(x, y + cellSize, x + cellSize, y + cellSize);
+          if (maze[r][c].walls[3]) line(x, y, x, y + cellSize);
+          ctx.stroke();
+
+          // goal emoji + glow
+          if (c === goal.x && r === goal.y) {
+            ctx.save();
+            ctx.shadowColor = "rgba(255,255,255,.65)";
+            ctx.shadowBlur = 18;
+            ctx.font = (cellSize - 4) + "px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "rgba(255,255,255,.95)";
+            ctx.fillText("🧑‍💼", x + cellSize / 2, y + cellSize / 2 + 1);
+            ctx.restore();
+          }
+        }
+      }
+
+      // Player: ikut glow
+      if (imageLoaded) {
+        const padding = 3;
+        ctx.save();
+        ctx.shadowColor = "rgba(255,255,255,.65)";
+        ctx.shadowBlur = 16;
+        ctx.drawImage(
+          playerImg,
+          player.x * cellSize + padding,
+          player.y * cellSize + padding,
+          cellSize - (padding * 2),
+          cellSize - (padding * 2)
+        );
+        ctx.restore();
+      } else {
+        ctx.save();
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "rgba(255,255,255,.65)";
+        ctx.shadowBlur = 16;
+        ctx.beginPath();
+        ctx.arc(
+          player.x * cellSize + cellSize / 2,
+          player.y * cellSize + cellSize / 2,
+          cellSize / 3,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // reset shadow biar gak “nempel” ke hal lain
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = "transparent";
+    }
+
+    function line(x1, y1, x2, y2) {
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+    }
+
+    // ========= POPUP FLOW =========
+    const winModal = document.getElementById("winModal");
+    const modalText = document.getElementById("modalText");
+    const modalActions = document.getElementById("modalActions");
+
+    let flowStep = 0; // step lanjutan setelah "lanjut"
+
+    const TXT_ASK =
+      "akhirnya ikhwan interview sama HRD, kira-kira dia berhasil gk yh?";
+
+    const TXT_BERHASIL =
+      "Alhamdulillah. gaji pertama bagi 2 yh hehehe (˶•𐃷•˶) kerja yang bener dan harus banyak-banyak bersyukur. tp kl lingkungannya toxic resign aja wakwoakwk";
+
+    const TXT_GAGAL =
+      "gapapa kok, yang penting udah berusaha. lagi pula perjalanan masih panjanggggggggggggggggggggggg dan masih banyak kesempatan lainnnn. kalo sedih boleh kok, tapi jangan berlarut ya... sialnya emang, hidup harus terus berjalan kaks d(ᵔᗜᵔ)";
+
+    function setActions(buttons) {
+      modalActions.innerHTML = "";
+      buttons.forEach(b => modalActions.appendChild(b));
+    }
+
+    function mkBtn(label, kind, onClick) {
+      const btn = document.createElement("button");
+      btn.className = `cbtn ${kind}`;
+      btn.textContent = label;
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    function openModal() {
+      winModal.classList.remove("hidden");
+      isLocked = true;
+    }
+
+    function closeModal() {
+      winModal.classList.add("hidden");
+      isLocked = false;
+    }
+
+    /* ================== FLOW SIMETRIS ================== */
+
+    function startWinFlow() {
+      // reset alur
+      flowStep = 0;
+      modalText.textContent = TXT_ASK;
+
+      setActions([
+        mkBtn("berhasil", "cbtn-primary", pickBerhasilFirst),
+        mkBtn("gagal", "cbtn-ghost", pickGagalFirst),
+      ]);
+
+      openModal();
+    }
+
+    // Berhasil dulu -> (tanya gagal?) -> gagal -> lanjut story
+    function pickBerhasilFirst() {
+      modalText.textContent = TXT_BERHASIL;
+
+      setActions([
+        mkBtn("kalo ga berhasil?", "cbtn-primary", afterBerhasilShowGagal),
+      ]);
+    }
+
+    function afterBerhasilShowGagal() {
+      modalText.textContent = TXT_GAGAL;
+
+      // habis ini masuk ke story lanjut
+      flowStep = 1;
+      setActions([
+        mkBtn("lanjut", "cbtn-primary", nextLanjut),
+      ]);
+    }
+
+    // Gagal dulu -> (tanya berhasil?) -> berhasil -> lanjut story
+    function pickGagalFirst() {
+      modalText.textContent = TXT_GAGAL;
+
+      setActions([
+        mkBtn("gimana kalo berhasil?", "cbtn-primary", afterGagalShowBerhasil),
+      ]);
+    }
+
+    function afterGagalShowBerhasil() {
+      modalText.textContent = TXT_BERHASIL;
+
+      // habis ini masuk ke story lanjut
+      flowStep = 1;
+      setActions([
+        mkBtn("lanjut", "cbtn-primary", nextLanjut),
+      ]);
+    }
+
+    /* ================== LANJUTAN CERITA ================== */
+    function nextLanjut() {
+      if (flowStep === 1) {
+        modalText.textContent = "yahhh udahan njir";
+        setActions([mkBtn("lanjut", "cbtn-primary", nextLanjut)]);
+        flowStep = 2;
+        return;
+      }
+
+      if (flowStep === 2) {
+        modalText.textContent = "udah gaada lagi woiiii";
+        setActions([mkBtn("lanjut", "cbtn-primary", nextLanjut)]);
+        flowStep = 3;
+        return;
+      }
+
+      if (flowStep === 3) {
+        modalText.textContent = "terakhir deh. apapun yang terjadi, jangan bundir yh ( ´･･)ﾉ(._.`) gwa percaya luh sejago itu kok menghadapi dunia (  •̀ ᗜ •́  )";
+        setActions([mkBtn("lanjut", "cbtn-primary", nextLanjut)]);
+        flowStep = 4;
+        return;
+      }
+
+      if (flowStep === 4) {
+        modalText.textContent = "cuma ini yang bisa gwa kasi heheheh. harus suka sih!!!!!!!!! effort bgt ini bikinnya 7 hari 7 malem 😇";
+        setActions([
+          mkBtn("udahan ah", "cbtn-primary", goWhatsApp),
+          mkBtn("masih mau main", "cbtn-ghost", backToGame),
+        ]);
+        flowStep = 5;
+        return;
+      }
+    }
+
+    /* ================== ACTION ENDING ================== */
+    function goWhatsApp() {
+      const text =
+        "KEREN BANGET SUMPAH WEBSITE NYA GA BOONG GWA SUKA BANGETTTTT\n" +
+        "MAKASIII BANYAK YAAA LIPA CANTIKKK DAN BAIK HATI SEPERTI BIDADARI.\n" +
+        "POKOKNYA LUH CEWE PALING GREENFLAG YANG PERNAH GWA TEMUI DI DUNIA INI.\n" +
+        "(˶ᵔ ᵕ ᵔ˶)";
+
+      const url = "https://wa.me/6283877948159?text=" + encodeURIComponent(text);
+      window.open(url, "_blank", "noopener,noreferrer");
+      window.location.href = "index.html"
+    }
+
+    function backToGame() {
+      closeModal();
+      setup();
+      try { audio.play(); } catch (e) { }
+    }
+
+    // ========= MOVE =========
+    let isLocked = false;
+
+    function move(key) {
+      if (isLocked) return;
+
+      const { x, y } = player;
+
+      if ((key === "ArrowUp" || key === "w") && !maze[y][x].walls[0]) player.y--;
+      else if ((key === "ArrowRight" || key === "d") && !maze[y][x].walls[1]) player.x++;
+      else if ((key === "ArrowDown" || key === "s") && !maze[y][x].walls[2]) player.y++;
+      else if ((key === "ArrowLeft" || key === "a") && !maze[y][x].walls[3]) player.x--;
+
+      draw();
+      checkWin();
+    }
+
+    function checkWin() {
+      if (player.x === goal.x && player.y === goal.y) {
+        setTimeout(() => {
+          // pause audio
+          try { audio.pause(); } catch (e) { }
+          // buka popup flow (bukan alert lagi)
+          startWinFlow();
+        }, 80);
+      }
+    }
+
+    window.addEventListener("keydown", (e) => move(e.key));
+    window.addEventListener("resize", () => setup());
+
+    // kalau user tap sekali, bantu autoplay audio
+    // window.addEventListener("pointerdown", () => {
+    //   try { audio.play(); } catch (e) { }
+    // }, { once: true });
+
+    setup();
+  </script>
+</body>
+
+</html>
